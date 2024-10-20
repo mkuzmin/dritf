@@ -3,9 +3,9 @@ AWS::APS::Scraper
 AWS::APS::Workspace
 AWS::ARCZonalShift::ZonalAutoshiftConfiguration
 AWS::AccessAnalyzer::Analyzer
-AWS::AmazonMQ::Configuration
+# token AWS::AmazonMQ::Configuration
 AWS::Amplify::App
-AWS::Amplify::Domain
+# appId AWS::Amplify::Domain
 AWS::ApiGateway::ApiKey
 AWS::ApiGateway::ClientCertificate
 AWS::ApiGateway::DomainName
@@ -13,10 +13,10 @@ AWS::ApiGateway::RestApi
 AWS::ApiGateway::UsagePlan
 AWS::ApiGateway::VpcLink
 AWS::ApiGatewayV2::Api
-AWS::ApiGatewayV2::ApiMapping
+# ResourceModel AWS::ApiGatewayV2::ApiMapping
 AWS::ApiGatewayV2::DomainName
-AWS::ApiGatewayV2::IntegrationResponse
-AWS::ApiGatewayV2::RouteResponse
+# appId AWS::ApiGatewayV2::IntegrationResponse
+# appId AWS::ApiGatewayV2::RouteResponse
 AWS::ApiGatewayV2::VpcLink
 AWS::AppConfig::Application
 AWS::AppConfig::Extension
@@ -32,15 +32,15 @@ AWS::AppRunner::VpcIngressConnection
 AWS::AppStream::AppBlockBuilder
 AWS::AppStream::DirectoryConfig
 AWS::AppSync::DomainName
-AWS::AppTest::TestCase
-AWS::ApplicationAutoScaling::ScalableTarget
+# ListTestCases AWS::AppTest::TestCase
+# serviceNamespace AWS::ApplicationAutoScaling::ScalableTarget
 AWS::ApplicationInsights::Application
 AWS::ApplicationSignals::ServiceLevelObjective
 AWS::Athena::DataCatalog
 AWS::Athena::WorkGroup
-AWS::AuditManager::Assessment
+# setup AWS::AuditManager::Assessment
 AWS::AutoScaling::AutoScalingGroup
-AWS::AutoScaling::LifecycleHook
+# AutoScalingGroupName AWS::AutoScaling::LifecycleHook
 AWS::AutoScaling::ScalingPolicy
 AWS::AutoScaling::ScheduledAction
 AWS::Backup::BackupPlan
@@ -62,7 +62,7 @@ AWS::Bedrock::Prompt
 AWS::Budgets::BudgetsAction
 AWS::CE::AnomalyMonitor
 AWS::CE::AnomalySubscription
-AWS::CE::CostCategory
+# access AWS::CE::CostCategory
 AWS::Cassandra::Keyspace
 AWS::Cassandra::Table
 AWS::Chatbot::MicrosoftTeamsChannelConfiguration
@@ -71,7 +71,7 @@ AWS::CleanRooms::Collaboration
 AWS::CleanRooms::ConfiguredTable
 AWS::CleanRooms::Membership
 AWS::CleanRoomsML::TrainingDataset
-AWS::CloudFormation::ResourceDefaultVersion
+# arn AWS::CloudFormation::ResourceDefaultVersion
 AWS::CloudFormation::Stack
 AWS::CloudFormation::StackSet
 AWS::CloudFormation::TypeActivation
@@ -116,14 +116,14 @@ AWS::Config::ConfigurationAggregator
 AWS::Config::ConformancePack
 AWS::Config::OrganizationConformancePack
 AWS::Config::StoredQuery
-AWS::Connect::ApprovedOrigin
-AWS::Connect::EvaluationForm
+# arn AWS::Connect::ApprovedOrigin
+# arnAWS::Connect::EvaluationForm
 AWS::Connect::Instance
-AWS::Connect::InstanceStorageConfig
-AWS::Connect::SecurityKey
+# arn AWS::Connect::InstanceStorageConfig
+# arn AWS::Connect::SecurityKey
 AWS::Connect::TrafficDistributionGroup
 AWS::ConnectCampaigns::Campaign
-AWS::ControlTower::EnabledBaseline
+# role AWS::ControlTower::EnabledBaseline
 AWS::ControlTower::LandingZone
 AWS::DMS::DataProvider
 AWS::DMS::InstanceProfile
@@ -155,7 +155,7 @@ AWS::Deadline::LicenseEndpoint
 AWS::Deadline::Monitor
 AWS::Detective::Graph
 AWS::Detective::MemberInvitation
-AWS::Detective::OrganizationAdmin
+# access AWS::Detective::OrganizationAdmin
 AWS::DevOpsGuru::LogAnomalyDetectionIntegration
 AWS::DevOpsGuru::ResourceCollection
 AWS::DocDBElastic::Cluster
@@ -264,14 +264,14 @@ AWS::Events::Endpoint
 AWS::Events::EventBus
 AWS::Events::Rule
 AWS::FIS::ExperimentTemplate
-AWS::FMS::NotificationChannel
-AWS::FMS::Policy
-AWS::FMS::ResourceSet
+# admin AWS::FMS::NotificationChannel
+# admin AWS::FMS::Policy
+# admin AWS::FMS::ResourceSet
 AWS::FSx::DataRepositoryAssociation
 AWS::Forecast::DatasetGroup
 AWS::GameLift::Alias
 AWS::GameLift::Build
-AWS::GameLift::ContainerGroupDefinition
+# dev AWS::GameLift::ContainerGroupDefinition
 AWS::GameLift::Fleet
 AWS::GameLift::GameServerGroup
 AWS::GameLift::GameSessionQueue
@@ -281,8 +281,8 @@ AWS::GameLift::MatchmakingRuleSet
 AWS::GameLift::Script
 AWS::GlobalAccelerator::Accelerator
 AWS::GlobalAccelerator::CrossAccountAttachment
-AWS::GlobalAccelerator::EndpointGroup
-AWS::GlobalAccelerator::Listener
+# arn AWS::GlobalAccelerator::EndpointGroup
+# arn AWS::GlobalAccelerator::Listener
 AWS::Glue::Crawler
 AWS::Glue::Database
 AWS::Glue::Job
@@ -320,7 +320,7 @@ AWS::ImageBuilder::ImagePipeline
 AWS::ImageBuilder::InfrastructureConfiguration
 AWS::ImageBuilder::LifecyclePolicy
 AWS::Inspector::AssessmentTarget
-AWS::InspectorV2::CisScanConfiguration
+# enabled AWS::InspectorV2::CisScanConfiguration
 AWS::InspectorV2::Filter
 AWS::InternetMonitor::Monitor
 AWS::IoT::AccountAuditConfiguration
@@ -342,10 +342,10 @@ AWS::IoT::RoleAlias
 AWS::IoT::ScheduledAudit
 AWS::IoT::SecurityProfile
 AWS::IoT::SoftwarePackage
-AWS::IoT::SoftwarePackageVersion
+# denied AWS::IoT::SoftwarePackageVersion
 AWS::IoT::Thing
 AWS::IoT::ThingGroup
-AWS::IoT::ThingType
+# denied AWS::IoT::ThingType
 AWS::IoT::TopicRule
 AWS::IoT::TopicRuleDestination
 AWS::IoTAnalytics::Channel
@@ -355,20 +355,20 @@ AWS::IoTAnalytics::Pipeline
 AWS::IoTEvents::AlarmModel
 AWS::IoTEvents::DetectorModel
 AWS::IoTEvents::Input
-AWS::IoTFleetHub::Application
+# discontinue AWS::IoTFleetHub::Application
 AWS::IoTFleetWise::Campaign
 AWS::IoTFleetWise::DecoderManifest
 AWS::IoTFleetWise::Fleet
 AWS::IoTFleetWise::ModelManifest
 AWS::IoTFleetWise::SignalCatalog
 AWS::IoTFleetWise::Vehicle
-AWS::IoTSiteWise::AccessPolicy
+# ResourceModel AWS::IoTSiteWise::AccessPolicy
 AWS::IoTSiteWise::Asset
 AWS::IoTSiteWise::AssetModel
-AWS::IoTSiteWise::Dashboard
+# ResourceModel AWS::IoTSiteWise::Dashboard
 AWS::IoTSiteWise::Gateway
 AWS::IoTSiteWise::Portal
-AWS::IoTSiteWise::Project
+# token AWS::IoTSiteWise::Project
 AWS::IoTTwinMaker::Workspace
 AWS::IoTWireless::Destination
 AWS::IoTWireless::FuotaTask
@@ -391,10 +391,10 @@ AWS::Lambda::EventSourceMapping
 AWS::Lambda::Function
 AWS::LaunchWizard::Deployment
 AWS::Lex::Bot
-AWS::Lex::BotAlias
-AWS::Lex::ResourcePolicy
-AWS::LicenseManager::Grant
-AWS::LicenseManager::License
+# botId AWS::Lex::BotAlias
+# null AWS::Lex::ResourcePolicy
+# denied AWS::LicenseManager::Grant
+# denied AWS::LicenseManager::License
 AWS::Lightsail::Alarm
 AWS::Lightsail::Bucket
 AWS::Lightsail::Certificate
@@ -403,7 +403,7 @@ AWS::Lightsail::Database
 AWS::Lightsail::Disk
 AWS::Lightsail::Instance
 AWS::Lightsail::LoadBalancer
-AWS::Lightsail::LoadBalancerTlsCertificate
+# undefined AWS::Lightsail::LoadBalancerTlsCertificate
 AWS::Lightsail::StaticIp
 AWS::Location::APIKey
 AWS::Location::GeofenceCollection
@@ -428,24 +428,24 @@ AWS::MSK::Configuration
 AWS::MSK::Replicator
 AWS::MSK::VpcConnection
 AWS::MWAA::Environment
-AWS::Macie::AllowList
-AWS::Macie::CustomDataIdentifier
-AWS::Macie::FindingsFilter
+# failed AWS::Macie::AllowList
+# denied AWS::Macie::CustomDataIdentifier
+# denied AWS::Macie::FindingsFilter
 AWS::Macie::Session
 AWS::MediaConnect::Bridge
 AWS::MediaConnect::Flow
-AWS::MediaConnect::FlowEntitlement
-AWS::MediaConnect::FlowOutput
-AWS::MediaConnect::FlowSource
-AWS::MediaConnect::FlowVpcInterface
+# resourceModel AWS::MediaConnect::FlowEntitlement
+# resourceModel AWS::MediaConnect::FlowOutput
+# resourceModel AWS::MediaConnect::FlowSource
+# resourceModel AWS::MediaConnect::FlowVpcInterface
 AWS::MediaLive::CloudWatchAlarmTemplate
 AWS::MediaLive::CloudWatchAlarmTemplateGroup
-AWS::MediaLive::Cluster
+# error AWS::MediaLive::Cluster
 AWS::MediaLive::EventBridgeRuleTemplate
 AWS::MediaLive::EventBridgeRuleTemplateGroup
 AWS::MediaLive::Multiplex
-AWS::MediaLive::Network
-AWS::MediaLive::SdiSource
+# error AWS::MediaLive::Network
+# error AWS::MediaLive::SdiSource
 AWS::MediaLive::SignalMap
 AWS::MediaPackage::Channel
 AWS::MediaPackage::OriginEndpoint
@@ -461,7 +461,7 @@ AWS::MemoryDB::SubnetGroup
 AWS::MemoryDB::User
 AWS::Neptune::DBCluster
 AWS::NeptuneGraph::Graph
-AWS::NeptuneGraph::PrivateGraphEndpoint
+# token AWS::NeptuneGraph::PrivateGraphEndpoint
 AWS::NetworkFirewall::Firewall
 AWS::NetworkFirewall::FirewallPolicy
 AWS::NetworkFirewall::RuleGroup
@@ -484,10 +484,10 @@ AWS::Omics::VariantStore
 AWS::Omics::Workflow
 AWS::OpenSearchServerless::Collection
 AWS::OpenSearchServerless::VpcEndpoint
-AWS::OpsWorksCM::Server
-AWS::Organizations::Account
+# deprecated AWS::OpsWorksCM::Server
+# denied AWS::Organizations::Account
 AWS::Organizations::Organization
-AWS::Organizations::ResourcePolicy
+# denied AWS::Organizations::ResourcePolicy
 AWS::PCAConnectorAD::Connector
 AWS::PCAConnectorAD::DirectoryRegistration
 AWS::PCAConnectorSCEP::Connector
@@ -499,11 +499,11 @@ AWS::Pipes::Pipe
 AWS::Proton::EnvironmentAccountConnection
 AWS::Proton::EnvironmentTemplate
 AWS::Proton::ServiceTemplate
-AWS::QuickSight::DataSet
-AWS::QuickSight::DataSource
-AWS::QuickSight::Folder
-AWS::QuickSight::Topic
-AWS::QuickSight::VPCConnection
+# resourceModel AWS::QuickSight::DataSet
+# resourceModel AWS::QuickSight::DataSource
+# not subscribed AWS::QuickSight::Folder
+# AwsAccountId AWS::QuickSight::Topic
+# AwsAccountId AWS::QuickSight::VPCConnection
 AWS::RAM::Permission
 AWS::RDS::CustomDBEngineVersion
 AWS::RDS::DBCluster
@@ -512,7 +512,7 @@ AWS::RDS::DBInstance
 AWS::RDS::DBParameterGroup
 AWS::RDS::DBProxy
 AWS::RDS::DBProxyEndpoint
-AWS::RDS::DBProxyTargetGroup
+# resourceModel AWS::RDS::DBProxyTargetGroup
 AWS::RDS::DBSubnetGroup
 AWS::RDS::EventSubscription
 AWS::RDS::GlobalCluster
@@ -537,8 +537,8 @@ AWS::ResilienceHub::ResiliencyPolicy
 AWS::ResourceExplorer2::Index
 AWS::ResourceExplorer2::View
 AWS::ResourceGroups::Group
-AWS::RoboMaker::Fleet
-AWS::RoboMaker::Robot
+# unsupported AWS::RoboMaker::Fleet
+# unsupported AWS::RoboMaker::Robot
 AWS::RoboMaker::RobotApplication
 AWS::RoboMaker::SimulationApplication
 AWS::RolesAnywhere::CRL
@@ -555,17 +555,17 @@ AWS::Route53Resolver::FirewallRuleGroup
 AWS::Route53Resolver::FirewallRuleGroupAssociation
 AWS::Route53Resolver::OutpostResolver
 AWS::Route53Resolver::ResolverRule
-AWS::S3::AccessGrant
+# instance does not exist AWS::S3::AccessGrant
 AWS::S3::AccessGrantsInstance
-AWS::S3::AccessGrantsLocation
+# instance does not exist AWS::S3::AccessGrantsLocation
 AWS::S3::AccessPoint
 AWS::S3::Bucket
 AWS::S3::BucketPolicy
-AWS::S3::MultiRegionAccessPointPolicy
+# null AWS::S3::MultiRegionAccessPointPolicy
 AWS::S3::StorageLens
 AWS::S3::StorageLensGroup
 AWS::S3ObjectLambda::AccessPoint
-AWS::S3Outposts::AccessPoint
+# resourcemodel AWS::S3Outposts::AccessPoint
 AWS::SES::ConfigurationSet
 AWS::SES::ContactList
 AWS::SES::DedicatedIpPool
@@ -588,14 +588,14 @@ AWS::SSM::PatchBaseline
 AWS::SSM::ResourceDataSync
 AWS::SSM::ResourcePolicy
 AWS::SSMContacts::Contact
-AWS::SSMContacts::ContactChannel
-AWS::SSMContacts::Rotation
+# contactId AWS::SSMContacts::ContactChannel
+# not found AWS::SSMContacts::Rotation
 AWS::SSMIncidents::ReplicationSet
 AWS::SSMIncidents::ResponsePlan
 AWS::SSMQuickSetup::ConfigurationManager
 AWS::SSO::Instance
-AWS::SSO::InstanceAccessControlAttributeConfiguration
-AWS::SSO::PermissionSet
+# resourcemodel AWS::SSO::InstanceAccessControlAttributeConfiguration
+# resourcemodel AWS::SSO::PermissionSet
 AWS::SageMaker::AppImageConfig
 AWS::SageMaker::Cluster
 AWS::SageMaker::Domain
@@ -616,26 +616,26 @@ AWS::Scheduler::ScheduleGroup
 AWS::SecretsManager::ResourcePolicy
 AWS::SecretsManager::Secret
 AWS::SecretsManager::SecretTargetAttachment
-AWS::SecurityHub::AutomationRule
-AWS::SecurityHub::ConfigurationPolicy
-AWS::SecurityHub::FindingAggregator
+# not subscribed AWS::SecurityHub::AutomationRule
+# denied AWS::SecurityHub::ConfigurationPolicy
+# not subscribed AWS::SecurityHub::FindingAggregator
 AWS::SecurityHub::Hub
-AWS::SecurityHub::Insight
-AWS::SecurityHub::OrganizationConfiguration
-AWS::SecurityHub::PolicyAssociation
-AWS::SecurityHub::SecurityControl
-AWS::SecurityHub::Standard
-AWS::SecurityLake::AwsLogSource
-AWS::SecurityLake::DataLake
-AWS::SecurityLake::Subscriber
-AWS::SecurityLake::SubscriberNotification
+# not subscribed AWS::SecurityHub::Insight
+# not subscribed AWS::SecurityHub::OrganizationConfiguration
+# denied AWS::SecurityHub::PolicyAssociation
+# not subscribed AWS::SecurityHub::SecurityControl
+# not subscribed AWS::SecurityHub::Standard
+# account AWS::SecurityLake::AwsLogSource
+# account AWS::SecurityLake::DataLake
+# account AWS::SecurityLake::Subscriber
+# account AWS::SecurityLake::SubscriberNotification
 AWS::ServiceCatalog::ServiceAction
 AWS::ServiceCatalogAppRegistry::Application
 AWS::ServiceCatalogAppRegistry::AttributeGroup
-AWS::Shield::DRTAccess
-AWS::Shield::ProactiveEngagement
-AWS::Shield::Protection
-AWS::Shield::ProtectionGroup
+# does not exist AWS::Shield::DRTAccess
+# does not exist AWS::Shield::ProactiveEngagement
+# does not exist AWS::Shield::Protection
+# does not exist AWS::Shield::ProtectionGroup
 AWS::Signer::SigningProfile
 AWS::SimSpaceWeaver::Simulation
 AWS::StepFunctions::Activity
@@ -685,25 +685,25 @@ AWS::AutoScaling::LaunchConfiguration
 AWS::Backup::BackupSelection
 AWS::CloudFormation::ModuleDefaultVersion
 AWS::CloudFormation::PublicTypeVersion
-AWS::CloudFormation::Publisher
-AWS::CloudFormation::ResourceVersion
+# id AWS::CloudFormation::Publisher
+# resourcemodel AWS::CloudFormation::ResourceVersion
 AWS::CodeDeploy::DeploymentConfig
 AWS::CodeGuruReviewer::RepositoryAssociation
 AWS::DevOpsGuru::NotificationChannel
 AWS::EC2::EIPAssociation
 AWS::EC2::EgressOnlyInternetGateway
-AWS::EC2::EnclaveCertificateIamRoleAssociation
+# arn AWS::EC2::EnclaveCertificateIamRoleAssociation
 AWS::EC2::KeyPair
 AWS::EC2::NetworkPerformanceMetricSubscription
 AWS::EC2::PlacementGroup
 AWS::EC2::SubnetCidrBlock
 AWS::EC2::SubnetNetworkAclAssociation
 AWS::EC2::SubnetRouteTableAssociation
-AWS::EC2::TransitGatewayMulticastDomainAssociation
+# resourcemodel AWS::EC2::TransitGatewayMulticastDomainAssociation
 AWS::EC2::VPNConnectionRoute
 AWS::EC2::VolumeAttachment
 AWS::EMR::SecurityConfiguration
-AWS::Evidently::Segment
+# token AWS::Evidently::Segment
 AWS::Forecast::Dataset
 AWS::GroundStation::DataflowEndpointGroup
 AWS::ImageBuilder::ContainerRecipe
@@ -714,15 +714,15 @@ AWS::IoTWireless::DeviceProfile
 AWS::IoTWireless::ServiceProfile
 AWS::IoTWireless::TaskDefinition
 AWS::LakeFormation::DataCellsFilter
-AWS::Lambda::LayerVersion
-AWS::Lambda::LayerVersionPermission
-AWS::Lex::BotVersion
-AWS::Location::TrackerConsumer
+# arn AWS::Lambda::LayerVersion
+# arn AWS::Lambda::LayerVersionPermission
+# botId AWS::Lex::BotVersion
+# trackername AWS::Location::TrackerConsumer
 AWS::LookoutMetrics::Alert
 AWS::MSK::ServerlessCluster
 AWS::MediaConnect::Gateway
-AWS::MediaPackage::Asset
-AWS::MediaPackage::PackagingConfiguration
+# resourcemodel AWS::MediaPackage::Asset
+# resourcemodel AWS::MediaPackage::PackagingConfiguration
 AWS::Omics::ReferenceStore
 AWS::Omics::SequenceStore
 AWS::Personalize::DatasetGroup
@@ -737,12 +737,12 @@ AWS::Route53Resolver::ResolverQueryLoggingConfigAssociation
 AWS::Route53Resolver::ResolverRuleAssociation
 AWS::S3::MultiRegionAccessPoint
 AWS::S3Outposts::Endpoint
-AWS::SSO::Assignment
+# resourcemodel AWS::SSO::Assignment
 AWS::SageMaker::App
 AWS::SageMaker::DataQualityJobDefinition
 AWS::SageMaker::ModelBiasJobDefinition
 AWS::SageMaker::ModelExplainabilityJobDefinition
 AWS::SageMaker::ModelQualityJobDefinition
 AWS::SageMaker::StudioLifecycleConfig
-AWS::SecurityHub::DelegatedAdmin
-AWS::SecurityHub::ProductSubscription
+# permission AWS::SecurityHub::DelegatedAdmin
+# not subscribed AWS::SecurityHub::ProductSubscription
