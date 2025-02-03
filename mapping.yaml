@@ -70,17 +70,18 @@ services:
           - us-east-2
           - us-west-1
           - us-west-2
-      - name: LayerVersionPermission
-      - name: LayerVersion
     ignored_resource_types:
-      # not listable
+      #TODO not listable
       - ResourcePolicy
-      # have parents
+      #TODO have parents
       - Url
       - Alias
       - EventInvokeConfig
       - Permission
       - Version
+      #TODO undocumented parents
+      - LayerVersion
+      - LayerVersionPermission
 
 ignored_services:
   - ACMPCA

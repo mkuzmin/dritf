@@ -4,6 +4,7 @@ go 1.23
 
 require (
 	github.com/aws/aws-sdk-go-v2/config v1.29.4
+	github.com/aws/aws-sdk-go-v2/service/account v1.22.7
 	github.com/aws/aws-sdk-go-v2/service/cloudcontrol v1.23.10
 	gopkg.in/yaml.v2 v2.4.0
 )
