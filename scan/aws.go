@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/account"
 	"github.com/aws/aws-sdk-go-v2/service/account/types"
 	"github.com/aws/aws-sdk-go-v2/service/cloudcontrol"
+	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"log"
 	"slices"
 )
@@ -20,6 +21,7 @@ func scanTypes(cfg *Config) {
 		log.Fatal("failed to create AWS client: ", err)
 	}
 
+	accountId := getAccountId(awsConfig)
 	enabledRegions := getEnabledRegions(awsConfig)
 
 	for _, region := range cfg.Regions {
@@ -49,12 +51,26 @@ func scanTypes(cfg *Config) {
 						log.Fatalf("failed to list resources for '%s': %v", rt.Name, err)
 					}
 					for _, res := range output.ResourceDescriptions {
-						fmt.Printf("%s,%s,%s,%s\n", region, svc.Name, rt.Name, *res.Identifier)
+						fmt.Printf("%s,%s,%s,%s,%s\n", accountId, region, svc.Name, rt.Name, *res.Identifier)
 					}
 				}
 			}
 		}
 	}
+}
+
+func getAccountId(awsConfig aws.Config) string {
+	stsClient := sts.NewFromConfig(
+		awsConfig,
+		func(o *sts.Options) { o.Region = "us-east-1" },
+	)
+
+	result, err := stsClient.GetCallerIdentity(ctx, &sts.GetCallerIdentityInput{})
+	if err != nil {
+		log.Fatalf("unable to get caller identity: %v", err)
+	}
+
+	return *result.Account
 }
 
 func getEnabledRegions(awsConfig aws.Config) []string {
