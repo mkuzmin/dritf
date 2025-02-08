@@ -15,8 +15,8 @@ func main() {
 		log.Fatalf("failed to load config: %v", err)
 	}
 
-	resources := common.ScanTypes(cfg, ctx)
-	for _, res := range resources {
+	resourceChan := common.ScanTypes(ctx, cfg)
+	for res := range resourceChan {
 		fmt.Printf("%s,%s,%s,%s,%s\n", res.Account, res.Region, res.Service, res.TypeName, res.Id)
 	}
 }

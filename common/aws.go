@@ -15,8 +15,14 @@ import (
 	"slices"
 )
 
-func ScanTypes(cfg *Config, ctx context.Context) []Resource {
-	var allResources []Resource
+func ScanTypes(ctx context.Context, cfg *Config) chan Resource {
+	resourceChan := make(chan Resource)
+	go scanTypesInternal(ctx, cfg, resourceChan)
+	return resourceChan
+}
+
+func scanTypesInternal(ctx context.Context, cfg *Config, resourceChan chan Resource) {
+
 	awsConfig := setupAWSConfig(ctx)
 	accountId := getAccountId(ctx, awsConfig)
 	enabledRegions := getEnabledRegions(ctx, awsConfig)
@@ -36,18 +42,11 @@ func ScanTypes(cfg *Config, ctx context.Context) []Resource {
 				if len(rt.Regions) > 0 && !slices.Contains(rt.Regions, region) {
 					continue
 				}
-				resources := scanResourceType(ctx, ccClient, svc, rt)
-
-				for _, res := range resources {
-					res.Account = accountId
-					res.Region = region
-					res.Service = svc.Name
-					allResources = append(allResources, res)
-				}
+				scanResourceType(ctx, ccClient, accountId, region, svc, rt, resourceChan)
 			}
 		}
 	}
-	return allResources
+	close(resourceChan)
 }
 
 func setupAWSConfig(ctx context.Context) aws.Config {
@@ -112,40 +111,41 @@ type Resource struct {
 	Id       string
 }
 
-func scanResourceType(ctx context.Context, ccClient *cloudcontrol.Client, svc Service, rt ResourceType) []Resource {
+func scanResourceType(ctx context.Context, ccClient *cloudcontrol.Client, accountId string, region string, svc Service, rt ResourceType, outChan chan Resource) {
 	name := fmt.Sprintf("AWS::%s::%s", svc.Name, rt.Name)
 	input := cloudcontrol.ListResourcesInput{TypeName: &name}
 
-	resources := listResources(ctx, ccClient, &input, rt.Name)
-	var result []Resource
+	resources := listResources(ctx, ccClient, &input, svc, rt.Name, accountId, region, outChan)
 	for _, res := range resources {
-		result = append(result, Resource{
-			TypeName: rt.Name,
-			Id:       *res.Identifier,
-		})
-
 		for _, depType := range rt.DependentTypes {
-			depResources := listDependentResources(ctx, ccClient, &res, svc, depType)
-			result = append(result, depResources...)
+			listDependentResources(ctx, ccClient, &res, svc, depType, accountId, region, outChan)
 		}
 	}
-	return result
 }
 
-func listResources(ctx context.Context, ccClient *cloudcontrol.Client, input *cloudcontrol.ListResourcesInput, resourceTypeName string) []ccTypes.ResourceDescription {
+func listResources(ctx context.Context, ccClient *cloudcontrol.Client, input *cloudcontrol.ListResourcesInput, svc Service, typeName string, accountId string, region string, outChan chan Resource) []ccTypes.ResourceDescription {
 	var resources []ccTypes.ResourceDescription
 	paginator := cloudcontrol.NewListResourcesPaginator(ccClient, input)
 	for paginator.HasMorePages() {
 		output, err := paginator.NextPage(ctx)
 		if err != nil {
-			log.Fatalf("failed to list resources for '%s': %v", resourceTypeName, err)
+			log.Fatalf("failed to list resources for '%s': %v", typeName, err)
 		}
-		resources = append(resources, output.ResourceDescriptions...)
+		for _, res := range output.ResourceDescriptions {
+			outChan <- Resource{
+				Account:  accountId,
+				Region:   region,
+				Service:  svc.Name,
+				TypeName: typeName,
+				Id:       *res.Identifier,
+			}
+			resources = append(resources, res)
+		}
 	}
 	return resources
 }
 
-func listDependentResources(ctx context.Context, ccClient *cloudcontrol.Client, res *ccTypes.ResourceDescription, svc Service, depType DepType) []Resource {
+func listDependentResources(ctx context.Context, ccClient *cloudcontrol.Client, res *ccTypes.ResourceDescription, svc Service, depType DepType, accountId string, region string, outChan chan Resource) {
 	name := fmt.Sprintf("AWS::%s::%s", svc.Name, depType.Name)
 	var model string
 	if depType.Property == nil {
@@ -165,15 +165,8 @@ func listDependentResources(ctx context.Context, ccClient *cloudcontrol.Client, 
 		TypeName:      &name,
 		ResourceModel: &model,
 	}
-	resources := listResources(ctx, ccClient, &input, depType.Name)
-	var result []Resource
-	for _, res := range resources {
-		result = append(result, Resource{
-			TypeName: depType.Name,
-			Id:       *res.Identifier,
-		})
-	}
-	return result
+
+	listResources(ctx, ccClient, &input, svc, depType.Name, accountId, region, outChan)
 }
 
 func getJsonProperty(doc string, property string) string {
