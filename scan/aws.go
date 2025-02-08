@@ -44,6 +44,7 @@ func scanTypes(cfg *Config) {
 				input := cloudcontrol.ListResourcesInput{
 					TypeName: &name,
 				}
+
 				paginator := cloudcontrol.NewListResourcesPaginator(ccClient, &input)
 				for paginator.HasMorePages() {
 					output, err := paginator.NextPage(ctx)
@@ -51,7 +52,32 @@ func scanTypes(cfg *Config) {
 						log.Fatalf("failed to list resources for '%s': %v", rt.Name, err)
 					}
 					for _, res := range output.ResourceDescriptions {
-						fmt.Printf("%s,%s,%s,%s,%s\n", accountId, region, svc.Name, rt.Name, *res.Identifier)
+						id := *res.Identifier
+						fmt.Printf("%s,%s,%s,%s,%s\n", accountId, region, svc.Name, rt.Name, id)
+
+						for _, depType := range rt.DependentTypes {
+							name := fmt.Sprintf("AWS::%s::%s", svc.Name, depType.Name)
+							model := fmt.Sprintf(
+								`{"%s": "%s"}`,
+								depType.Ref,
+								id,
+							)
+							input := cloudcontrol.ListResourcesInput{
+								TypeName:      &name,
+								ResourceModel: &model,
+							}
+							paginator := cloudcontrol.NewListResourcesPaginator(ccClient, &input)
+							for paginator.HasMorePages() {
+								output, err := paginator.NextPage(ctx)
+								if err != nil {
+									log.Fatalf("failed to list dependent resources for '%s': %v", depType.Name, err)
+								}
+								for _, res := range output.ResourceDescriptions {
+									id := *res.Identifier
+									fmt.Printf("%s,%s,%s,%s,%s\n", accountId, region, svc.Name, depType.Name, id)
+								}
+							}
+						}
 					}
 				}
 			}

@@ -48,6 +48,15 @@ services:
     resource_types:
       - name: EventSourceMapping
       - name: Function
+        dependent_types:
+          - name: Alias
+            ref: FunctionName
+          - name: Version
+            ref: FunctionName
+          - name: EventInvokeConfig
+            ref: FunctionName
+          - name: Permission
+            ref: FunctionName
       - name: CodeSigningConfig
         regions:
           - af-south-1
@@ -73,12 +82,8 @@ services:
     ignored_resource_types:
       #TODO not listable
       - ResourcePolicy
-      #TODO have parents
+      #TODO parent with alternate ref
       - Url
-      - Alias
-      - EventInvokeConfig
-      - Permission
-      - Version
       #TODO undocumented parents
       - LayerVersion
       - LayerVersionPermission

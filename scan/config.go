@@ -19,8 +19,14 @@ type Service struct {
 }
 
 type ResourceType struct {
-	Name    string   `yaml:"name"`
-	Regions []string `yaml:"regions"`
+	Name           string    `yaml:"name"`
+	DependentTypes []DepType `yaml:"dependent_types"`
+	Regions        []string  `yaml:"regions"`
+}
+
+type DepType struct {
+	Name string `yaml:"name"`
+	Ref  string `yaml:"ref"`
 }
 
 func loadConfig(filename string) (*Config, error) {
@@ -34,6 +40,8 @@ func loadConfig(filename string) (*Config, error) {
 	if err != nil {
 		return nil, fmt.Errorf("unable to parse yaml: %w", err)
 	}
+
+	//cfg.Regions = []string{"eu-central-1"} //TODO
 
 	return &cfg, nil
 }
