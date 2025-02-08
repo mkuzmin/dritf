@@ -8,20 +8,14 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/account"
 	"github.com/aws/aws-sdk-go-v2/service/account/types"
 	"github.com/aws/aws-sdk-go-v2/service/cloudcontrol"
+	ccTypes "github.com/aws/aws-sdk-go-v2/service/cloudcontrol/types"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"log"
 	"slices"
 )
 
 func scanTypes(cfg *Config) {
-	awsConfig, err := config.LoadDefaultConfig(
-		ctx,
-		config.WithAppID("github.com/mkuzmin/dritf"),
-	)
-	if err != nil {
-		log.Fatal("failed to create AWS client: ", err)
-	}
-
+	awsConfig := setupAWSConfig()
 	accountId := getAccountId(awsConfig)
 	enabledRegions := getEnabledRegions(awsConfig)
 
@@ -40,59 +34,25 @@ func scanTypes(cfg *Config) {
 				if len(rt.Regions) > 0 && !slices.Contains(rt.Regions, region) {
 					continue
 				}
+				resources := scanResourceType(ccClient, svc, rt)
 
-				name := fmt.Sprintf("AWS::%s::%s", svc.Name, rt.Name)
-				input := cloudcontrol.ListResourcesInput{
-					TypeName: &name,
-				}
-
-				paginator := cloudcontrol.NewListResourcesPaginator(ccClient, &input)
-				for paginator.HasMorePages() {
-					output, err := paginator.NextPage(ctx)
-					if err != nil {
-						log.Fatalf("failed to list resources for '%s': %v", rt.Name, err)
-					}
-					for _, res := range output.ResourceDescriptions {
-						id := *res.Identifier
-						fmt.Printf("%s,%s,%s,%s,%s\n", accountId, region, svc.Name, rt.Name, id)
-
-						for _, depType := range rt.DependentTypes {
-							name := fmt.Sprintf("AWS::%s::%s", svc.Name, depType.Name)
-							var model string
-							if depType.Property == nil {
-								model = fmt.Sprintf(
-									`{"%s": "%s"}`,
-									depType.Ref,
-									id,
-								)
-							} else {
-								model = fmt.Sprintf(
-									`{"%s": "%s"}`,
-									depType.Ref,
-									getJsonProperty(*res.Properties, *depType.Property),
-								)
-							}
-							input := cloudcontrol.ListResourcesInput{
-								TypeName:      &name,
-								ResourceModel: &model,
-							}
-							paginator := cloudcontrol.NewListResourcesPaginator(ccClient, &input)
-							for paginator.HasMorePages() {
-								output, err := paginator.NextPage(ctx)
-								if err != nil {
-									log.Fatalf("failed to list dependent resources for '%s': %v", depType.Name, err)
-								}
-								for _, res := range output.ResourceDescriptions {
-									id := *res.Identifier
-									fmt.Printf("%s,%s,%s,%s,%s\n", accountId, region, svc.Name, depType.Name, id)
-								}
-							}
-						}
-					}
+				for _, res := range resources {
+					fmt.Printf("%s,%s,%s,%s,%s\n", accountId, region, svc.Name, res.TypeName, res.Id)
 				}
 			}
 		}
 	}
+}
+
+func setupAWSConfig() aws.Config {
+	awsConfig, err := config.LoadDefaultConfig(
+		ctx,
+		config.WithAppID("github.com/mkuzmin/dritf"),
+	)
+	if err != nil {
+		log.Fatal("failed to create AWS client: ", err)
+	}
+	return awsConfig
 }
 
 func getAccountId(awsConfig aws.Config) string {
@@ -136,6 +96,79 @@ func getEnabledRegions(awsConfig aws.Config) []string {
 		}
 	}
 	return enabledRegions
+}
+
+type Resource struct {
+	TypeName string
+	Id       string
+}
+
+func scanResourceType(ccClient *cloudcontrol.Client, svc Service, rt ResourceType) []Resource {
+	name := fmt.Sprintf("AWS::%s::%s", svc.Name, rt.Name)
+	input := cloudcontrol.ListResourcesInput{TypeName: &name}
+
+	resources := listResources(ccClient, &input, rt.Name)
+	var result []Resource
+	for _, res := range resources {
+		result = append(result, Resource{
+			TypeName: rt.Name,
+			Id:       *res.Identifier,
+		})
+
+		for _, depType := range rt.DependentTypes {
+			depResources := listDependentResources(ccClient, &res, svc, depType)
+			result = append(result, depResources...)
+		}
+	}
+	return result
+}
+
+func listResources(
+	ccClient *cloudcontrol.Client,
+	input *cloudcontrol.ListResourcesInput,
+	resourceTypeName string,
+) []ccTypes.ResourceDescription {
+	var resources []ccTypes.ResourceDescription
+	paginator := cloudcontrol.NewListResourcesPaginator(ccClient, input)
+	for paginator.HasMorePages() {
+		output, err := paginator.NextPage(ctx)
+		if err != nil {
+			log.Fatalf("failed to list resources for '%s': %v", resourceTypeName, err)
+		}
+		resources = append(resources, output.ResourceDescriptions...)
+	}
+	return resources
+}
+
+func listDependentResources(ccClient *cloudcontrol.Client, res *ccTypes.ResourceDescription, svc Service, depType DepType) []Resource {
+	name := fmt.Sprintf("AWS::%s::%s", svc.Name, depType.Name)
+	var model string
+	if depType.Property == nil {
+		model = fmt.Sprintf(
+			`{"%s": "%s"}`,
+			depType.Ref,
+			*res.Identifier,
+		)
+	} else {
+		model = fmt.Sprintf(
+			`{"%s": "%s"}`,
+			depType.Ref,
+			getJsonProperty(*res.Properties, *depType.Property),
+		)
+	}
+	input := cloudcontrol.ListResourcesInput{
+		TypeName:      &name,
+		ResourceModel: &model,
+	}
+	resources := listResources(ccClient, &input, depType.Name)
+	var result []Resource
+	for _, res := range resources {
+		result = append(result, Resource{
+			TypeName: depType.Name,
+			Id:       *res.Identifier,
+		})
+	}
+	return result
 }
 
 func getJsonProperty(doc string, property string) string {
