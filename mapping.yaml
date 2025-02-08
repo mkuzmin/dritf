@@ -57,6 +57,9 @@ services:
             ref: FunctionName
           - name: Permission
             ref: FunctionName
+          - name: Url
+            ref: TargetFunctionArn
+            property: Arn
       - name: CodeSigningConfig
         regions:
           - af-south-1
@@ -82,8 +85,6 @@ services:
     ignored_resource_types:
       #TODO not listable
       - ResourcePolicy
-      #TODO parent with alternate ref
-      - Url
       #TODO undocumented parents
       - LayerVersion
       - LayerVersionPermission

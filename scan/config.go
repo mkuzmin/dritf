@@ -25,8 +25,9 @@ type ResourceType struct {
 }
 
 type DepType struct {
-	Name string `yaml:"name"`
-	Ref  string `yaml:"ref"`
+	Name     string  `yaml:"name"`
+	Ref      string  `yaml:"ref"`
+	Property *string `yaml:"property"`
 }
 
 func loadConfig(filename string) (*Config, error) {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -57,11 +58,20 @@ func scanTypes(cfg *Config) {
 
 						for _, depType := range rt.DependentTypes {
 							name := fmt.Sprintf("AWS::%s::%s", svc.Name, depType.Name)
-							model := fmt.Sprintf(
-								`{"%s": "%s"}`,
-								depType.Ref,
-								id,
-							)
+							var model string
+							if depType.Property == nil {
+								model = fmt.Sprintf(
+									`{"%s": "%s"}`,
+									depType.Ref,
+									id,
+								)
+							} else {
+								model = fmt.Sprintf(
+									`{"%s": "%s"}`,
+									depType.Ref,
+									getJsonProperty(*res.Properties, *depType.Property),
+								)
+							}
 							input := cloudcontrol.ListResourcesInput{
 								TypeName:      &name,
 								ResourceModel: &model,
@@ -126,4 +136,14 @@ func getEnabledRegions(awsConfig aws.Config) []string {
 		}
 	}
 	return enabledRegions
+}
+
+func getJsonProperty(doc string, property string) string {
+	var result map[string]interface{}
+	err := json.Unmarshal([]byte(doc), &result)
+	if err != nil {
+		log.Fatal("failed to unmarshal json: ", err)
+	}
+
+	return result[property].(string)
 }
