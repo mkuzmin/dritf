@@ -1,4 +1,4 @@
-package main
+package common
 
 import (
 	"fmt"
@@ -30,7 +30,7 @@ type DepType struct {
 	Property *string `yaml:"property"`
 }
 
-func loadConfig(filename string) (*Config, error) {
+func LoadConfig(filename string) (*Config, error) {
 	data, err := os.ReadFile(filename)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read '%s' file: %w", filename, err)

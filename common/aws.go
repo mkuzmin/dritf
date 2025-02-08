@@ -1,6 +1,7 @@
-package main
+package common
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -14,10 +15,10 @@ import (
 	"slices"
 )
 
-func scanTypes(cfg *Config) {
-	awsConfig := setupAWSConfig()
-	accountId := getAccountId(awsConfig)
-	enabledRegions := getEnabledRegions(awsConfig)
+func ScanTypes(cfg *Config, ctx context.Context) {
+	awsConfig := setupAWSConfig(ctx)
+	accountId := getAccountId(ctx, awsConfig)
+	enabledRegions := getEnabledRegions(ctx, awsConfig)
 
 	for _, region := range cfg.Regions {
 		if !slices.Contains(enabledRegions, region) {
@@ -34,7 +35,7 @@ func scanTypes(cfg *Config) {
 				if len(rt.Regions) > 0 && !slices.Contains(rt.Regions, region) {
 					continue
 				}
-				resources := scanResourceType(ccClient, svc, rt)
+				resources := scanResourceType(ctx, ccClient, svc, rt)
 
 				for _, res := range resources {
 					fmt.Printf("%s,%s,%s,%s,%s\n", accountId, region, svc.Name, res.TypeName, res.Id)
@@ -44,7 +45,7 @@ func scanTypes(cfg *Config) {
 	}
 }
 
-func setupAWSConfig() aws.Config {
+func setupAWSConfig(ctx context.Context) aws.Config {
 	awsConfig, err := config.LoadDefaultConfig(
 		ctx,
 		config.WithAppID("github.com/mkuzmin/dritf"),
@@ -55,7 +56,7 @@ func setupAWSConfig() aws.Config {
 	return awsConfig
 }
 
-func getAccountId(awsConfig aws.Config) string {
+func getAccountId(ctx context.Context, awsConfig aws.Config) string {
 	stsClient := sts.NewFromConfig(
 		awsConfig,
 		func(o *sts.Options) { o.Region = "us-east-1" },
@@ -69,7 +70,7 @@ func getAccountId(awsConfig aws.Config) string {
 	return *result.Account
 }
 
-func getEnabledRegions(awsConfig aws.Config) []string {
+func getEnabledRegions(ctx context.Context, awsConfig aws.Config) []string {
 	accountClient := account.NewFromConfig(
 		awsConfig,
 		func(o *account.Options) { o.Region = "us-east-1" },
@@ -103,11 +104,11 @@ type Resource struct {
 	Id       string
 }
 
-func scanResourceType(ccClient *cloudcontrol.Client, svc Service, rt ResourceType) []Resource {
+func scanResourceType(ctx context.Context, ccClient *cloudcontrol.Client, svc Service, rt ResourceType) []Resource {
 	name := fmt.Sprintf("AWS::%s::%s", svc.Name, rt.Name)
 	input := cloudcontrol.ListResourcesInput{TypeName: &name}
 
-	resources := listResources(ccClient, &input, rt.Name)
+	resources := listResources(ctx, ccClient, &input, rt.Name)
 	var result []Resource
 	for _, res := range resources {
 		result = append(result, Resource{
@@ -116,18 +117,14 @@ func scanResourceType(ccClient *cloudcontrol.Client, svc Service, rt ResourceTyp
 		})
 
 		for _, depType := range rt.DependentTypes {
-			depResources := listDependentResources(ccClient, &res, svc, depType)
+			depResources := listDependentResources(ctx, ccClient, &res, svc, depType)
 			result = append(result, depResources...)
 		}
 	}
 	return result
 }
 
-func listResources(
-	ccClient *cloudcontrol.Client,
-	input *cloudcontrol.ListResourcesInput,
-	resourceTypeName string,
-) []ccTypes.ResourceDescription {
+func listResources(ctx context.Context, ccClient *cloudcontrol.Client, input *cloudcontrol.ListResourcesInput, resourceTypeName string) []ccTypes.ResourceDescription {
 	var resources []ccTypes.ResourceDescription
 	paginator := cloudcontrol.NewListResourcesPaginator(ccClient, input)
 	for paginator.HasMorePages() {
@@ -140,7 +137,7 @@ func listResources(
 	return resources
 }
 
-func listDependentResources(ccClient *cloudcontrol.Client, res *ccTypes.ResourceDescription, svc Service, depType DepType) []Resource {
+func listDependentResources(ctx context.Context, ccClient *cloudcontrol.Client, res *ccTypes.ResourceDescription, svc Service, depType DepType) []Resource {
 	name := fmt.Sprintf("AWS::%s::%s", svc.Name, depType.Name)
 	var model string
 	if depType.Property == nil {
@@ -160,7 +157,7 @@ func listDependentResources(ccClient *cloudcontrol.Client, res *ccTypes.Resource
 		TypeName:      &name,
 		ResourceModel: &model,
 	}
-	resources := listResources(ccClient, &input, depType.Name)
+	resources := listResources(ctx, ccClient, &input, depType.Name)
 	var result []Resource
 	for _, res := range resources {
 		result = append(result, Resource{
