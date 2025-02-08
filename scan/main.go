@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/mkuzmin/dritf/common"
 	"log"
 )
@@ -14,5 +15,8 @@ func main() {
 		log.Fatalf("failed to load config: %v", err)
 	}
 
-	common.ScanTypes(cfg, ctx)
+	resources := common.ScanTypes(cfg, ctx)
+	for _, res := range resources {
+		fmt.Printf("%s,%s,%s,%s,%s\n", res.Account, res.Region, res.Service, res.TypeName, res.Id)
+	}
 }

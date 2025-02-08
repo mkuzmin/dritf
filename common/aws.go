@@ -15,7 +15,8 @@ import (
 	"slices"
 )
 
-func ScanTypes(cfg *Config, ctx context.Context) {
+func ScanTypes(cfg *Config, ctx context.Context) []Resource {
+	var allResources []Resource
 	awsConfig := setupAWSConfig(ctx)
 	accountId := getAccountId(ctx, awsConfig)
 	enabledRegions := getEnabledRegions(ctx, awsConfig)
@@ -38,11 +39,15 @@ func ScanTypes(cfg *Config, ctx context.Context) {
 				resources := scanResourceType(ctx, ccClient, svc, rt)
 
 				for _, res := range resources {
-					fmt.Printf("%s,%s,%s,%s,%s\n", accountId, region, svc.Name, res.TypeName, res.Id)
+					res.Account = accountId
+					res.Region = region
+					res.Service = svc.Name
+					allResources = append(allResources, res)
 				}
 			}
 		}
 	}
+	return allResources
 }
 
 func setupAWSConfig(ctx context.Context) aws.Config {
@@ -100,6 +105,9 @@ func getEnabledRegions(ctx context.Context, awsConfig aws.Config) []string {
 }
 
 type Resource struct {
+	Account  string
+	Region   string
+	Service  string
 	TypeName string
 	Id       string
 }
