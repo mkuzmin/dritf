@@ -8,7 +8,13 @@ import (
 	"log"
 )
 
-func Scan(ctx context.Context, cfg *Config) []Result {
+func Scan(ctx context.Context, cfg *Config) chan Result {
+	resultChan := make(chan Result)
+	go listResources(ctx, cfg, resultChan)
+	return resultChan
+}
+
+func listResources(ctx context.Context, cfg *Config, resultChan chan Result) {
 	awsConfig, err := config.LoadDefaultConfig(
 		ctx,
 		config.WithAppID("github.com/mkuzmin/dritf"),
@@ -17,7 +23,6 @@ func Scan(ctx context.Context, cfg *Config) []Result {
 		log.Fatalf("failed to create AWS config: %v", err)
 	}
 
-	var results []Result
 	for _, region := range cfg.Regions {
 		client := cloudcontrol.NewFromConfig(
 			awsConfig,
@@ -33,27 +38,27 @@ func Scan(ctx context.Context, cfg *Config) []Result {
 				for paginator.HasMorePages() {
 					output, err := paginator.NextPage(ctx)
 					if err != nil {
-						results = append(results, Result{
+						resultChan <- Result{
 							Error: fmt.Errorf("failed to list resources for '%s' (%s): %v", name, region, err),
-						})
+						}
 						break
 					}
 
 					for _, res := range output.ResourceDescriptions {
 						id := *res.Identifier
-						results = append(results, Result{
+						resultChan <- Result{
 							Resource: Resource{
 								Region:   region,
 								Service:  service.Name,
 								TypeName: resourceType.Name,
 								Id:       id,
 							},
-						})
+						}
 					}
 				}
 			}
 		}
 	}
 
-	return results
+	close(resultChan)
 }

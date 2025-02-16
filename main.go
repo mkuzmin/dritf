@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/mkuzmin/dritf/aws"
 	"log"
 )
@@ -14,14 +15,14 @@ func main() {
 		log.Fatalf("failed to load config: %v", err)
 	}
 
-	results := aws.Scan(ctx, cfg)
+	resultChan := aws.Scan(ctx, cfg)
 
-	for _, result := range results {
+	for result := range resultChan {
 		if result.Error != nil {
 			log.Printf("failed to scan resources: %v", result.Error)
 			continue
 		}
 		res := result.Resource
-		println(res.Region, res.Service, res.TypeName, res.Id)
+		fmt.Println(res.Region, res.Service, res.TypeName, res.Id)
 	}
 }
