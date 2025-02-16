@@ -5,18 +5,19 @@ import (
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/cloudcontrol"
+	"log"
 )
 
-func Scan(ctx context.Context, cfg *Config) ([]Resource, error) {
+func Scan(ctx context.Context, cfg *Config) []Result {
 	awsConfig, err := config.LoadDefaultConfig(
 		ctx,
 		config.WithAppID("github.com/mkuzmin/dritf"),
 	)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create AWS config: %w", err)
+		log.Fatalf("failed to create AWS config: %v", err)
 	}
 
-	var resources []Resource
+	var results []Result
 	for _, region := range cfg.Regions {
 		client := cloudcontrol.NewFromConfig(
 			awsConfig,
@@ -32,16 +33,21 @@ func Scan(ctx context.Context, cfg *Config) ([]Resource, error) {
 				for paginator.HasMorePages() {
 					output, err := paginator.NextPage(ctx)
 					if err != nil {
-						return nil, fmt.Errorf("failed to list resources for '%s' (%s): %v", name, region, err)
+						results = append(results, Result{
+							Error: fmt.Errorf("failed to list resources for '%s' (%s): %v", name, region, err),
+						})
+						break
 					}
 
 					for _, res := range output.ResourceDescriptions {
 						id := *res.Identifier
-						resources = append(resources, Resource{
-							Region:   region,
-							Service:  service.Name,
-							TypeName: resourceType.Name,
-							Id:       id,
+						results = append(results, Result{
+							Resource: Resource{
+								Region:   region,
+								Service:  service.Name,
+								TypeName: resourceType.Name,
+								Id:       id,
+							},
 						})
 					}
 				}
@@ -49,5 +55,5 @@ func Scan(ctx context.Context, cfg *Config) ([]Resource, error) {
 		}
 	}
 
-	return resources, nil
+	return results
 }
