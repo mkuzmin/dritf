@@ -12,6 +12,8 @@ github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.32 h1:m1GeXHVMJsRsUAqG6H
 github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.32/go.mod h1:IitoQxGfaKdVLNg0hD8/DXmAqNy0H4K2H2Sf91ti8sI=
 github.com/aws/aws-sdk-go-v2/internal/ini v1.8.2 h1:Pg9URiobXy85kgFev3og2CuOZ8JZUBENF+dcgWBaYNk=
 github.com/aws/aws-sdk-go-v2/internal/ini v1.8.2/go.mod h1:FbtygfRFze9usAadmnGJNc8KsP346kEe+y2/oyhGAGc=
+github.com/aws/aws-sdk-go-v2/service/account v1.22.8 h1:+lD4yimG2mnzbG130tXaRDnacFpO3r4bYzR9IY2qzxk=
+github.com/aws/aws-sdk-go-v2/service/account v1.22.8/go.mod h1:fikXHLo5UeQLE2kUt6JtO1SHfBqgqIqKk3inzXG3VGc=
 github.com/aws/aws-sdk-go-v2/service/cloudcontrol v1.23.11 h1:vsDNkqiXTCeTaSt1qNtri0RzTBDAXV1VQ4L5c5lvW2k=
 github.com/aws/aws-sdk-go-v2/service/cloudcontrol v1.23.11/go.mod h1:aH+Z4h+QZfJ2iEP+EITPDP8nZI1eFUJu38V6c9Nq9uQ=
 github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.12.2 h1:D4oz8/CzT9bAEYtVhSBmFj2dNOtaHOtMKc2vHBwYizA=

@@ -3,9 +3,13 @@ package aws
 import (
 	"context"
 	"fmt"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/account"
+	"github.com/aws/aws-sdk-go-v2/service/account/types"
 	"github.com/aws/aws-sdk-go-v2/service/cloudcontrol"
 	"log"
+	"slices"
 )
 
 func Scan(ctx context.Context, cfg *Config) chan Result {
@@ -23,7 +27,14 @@ func listResources(ctx context.Context, cfg *Config, resultChan chan Result) {
 		log.Fatalf("failed to create AWS config: %v", err)
 	}
 
+	enabledRegions := getEnabledRegions(ctx, awsConfig)
+
 	for _, region := range cfg.Regions {
+		if !slices.Contains(enabledRegions, region) {
+			continue
+		}
+		log.Println(region)
+
 		client := cloudcontrol.NewFromConfig(
 			awsConfig,
 			func(o *cloudcontrol.Options) { o.Region = region },
@@ -61,4 +72,30 @@ func listResources(ctx context.Context, cfg *Config, resultChan chan Result) {
 	}
 
 	close(resultChan)
+}
+
+func getEnabledRegions(ctx context.Context, awsConfig aws.Config) []string {
+	accountClient := account.NewFromConfig(awsConfig)
+
+	paginator := account.NewListRegionsPaginator(accountClient, &account.ListRegionsInput{})
+
+	var enabledRegions []string
+	for paginator.HasMorePages() {
+		listRegionsOutput, err := paginator.NextPage(ctx)
+		if err != nil {
+			log.Fatalf("failed to list regions: %v", err)
+		}
+
+		for _, regionDetail := range listRegionsOutput.Regions {
+			if regionDetail.RegionOptStatus != types.RegionOptStatusEnabledByDefault &&
+				regionDetail.RegionOptStatus != types.RegionOptStatusEnabled {
+				continue
+			}
+			if regionDetail.RegionName == nil {
+				log.Fatalf("region has no name: %v", err)
+			}
+			enabledRegions = append(enabledRegions, *regionDetail.RegionName)
+		}
+	}
+	return enabledRegions
 }
