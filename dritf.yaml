@@ -31,6 +31,7 @@ regions:
   - us-east-2
   - us-west-1
   - us-west-2
+  # GovCloud and China regions are not supported
 
 services:
   - name: ECR
