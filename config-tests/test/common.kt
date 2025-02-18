@@ -1,7 +1,8 @@
+import cloudformation.Schema
 import config.Config
 
 val config = Config(directory = "../dritf.yaml")
-val awsRegions = aws.readRegions()
+val schema = Schema(directory = "build/schema")
 
 fun findDuplicates(data: List<String>): List<String> =
     data

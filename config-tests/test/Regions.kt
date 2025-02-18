@@ -17,19 +17,29 @@ class Regions {
     }
 
     @Test
-    fun `region list is actual`() {
-        assert(config.regions.distinct().sorted() == awsRegions.sorted())
+    fun `region list in Gradle is actual`() {
+        assert(schema.regions.sorted() == aws.readRegions().sorted())
     }
 
     @Test
-    fun `region list in Gradle is actual`() {
-        val filename = javaClass.getResource("regions.txt")
-            ?: error("Could not find the file")
-        val regions = filename
-            .readText()
-            .lines()
-            .filter { it.isNotBlank() }
+    fun `missing regions`() {
+        val diff = schema.regions - config.regions
+        assert(diff.isEmpty()) {
+            buildString {
+                appendLine("Missing regions:")
+                diff.forEach { appendLine("- $it") }
+            }
+        }
+    }
 
-        assert(regions.sorted() == awsRegions.sorted())
+    @Test
+    fun `unknown regions`() {
+        val diff = config.regions - schema.regions
+        assert(diff.isEmpty()) {
+            buildString {
+                appendLine("Unknown regions:")
+                diff.forEach { appendLine("- $it") }
+            }
+        }
     }
 }
