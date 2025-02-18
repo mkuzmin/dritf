@@ -1,6 +1,7 @@
 import config.Config
 
 val config = Config(directory = "../dritf.yaml")
+val awsRegions = aws.readRegions()
 
 fun findDuplicates(data: List<String>): List<String> =
     data
