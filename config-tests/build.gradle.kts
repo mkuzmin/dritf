@@ -1,6 +1,8 @@
 plugins {
     kotlin("jvm") version "2.1.10"
     kotlin("plugin.serialization") version "2.1.10"
+
+    id("de.undercouch.download") version "5.6.0"
 }
 
 repositories {
@@ -22,12 +24,12 @@ dependencies {
 kotlin {
     sourceSets {
         main {
-            kotlin.srcDirs("src")
+            kotlin.setSrcDirs(listOf("src"))
         }
 
         test {
-            kotlin.srcDirs("test")
-            resources.srcDirs("testResources")
+            kotlin.setSrcDirs(listOf("test"))
+            resources.setSrcDirs(listOf("testResources"))
         }
     }
 
@@ -39,4 +41,43 @@ kotlin {
 tasks.test {
     useJUnitPlatform()
     inputs.file("../dritf.yaml")
+    dependsOn("getRegions")
+}
+
+val regions = kotlin.sourceSets["test"]
+    .resources.srcDirs
+    .single()
+    .resolve("regions.txt")
+    .readLines()
+
+regions.forEach { region ->
+    val schemaDir = layout.buildDirectory.dir("schema")
+
+    tasks.register<de.undercouch.gradle.tasks.download.Download>("download-$region") {
+        group = "schema"
+
+        src("https://schema.cloudformation.${region}.amazonaws.com/CloudformationSchema.zip")
+        dest(schemaDir.get().file("${region}.zip"))
+
+        onlyIfModified(true)
+        useETag(true)
+        downloadTaskDir(schemaDir)
+        quiet(true)
+    }
+
+    // Extract task
+    tasks.register<Sync>("unzip-$region") {
+        group = "schema"
+        dependsOn("download-$region")
+
+        from(zipTree(schemaDir.get().file("${region}.zip")))
+        into(schemaDir.get().dir(region))
+    }
+}
+
+tasks.register("getRegions") {
+    group = "schema"
+    regions.forEach { region ->
+        dependsOn("unzip-$region")
+    }
 }
