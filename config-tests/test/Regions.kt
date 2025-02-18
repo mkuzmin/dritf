@@ -18,7 +18,18 @@ class Regions {
 
     @Test
     fun `region list is actual`() {
-        val awsRegions = aws.readRegions()
         assert(config.regions.distinct().sorted() == awsRegions.sorted())
+    }
+
+    @Test
+    fun `region list in Gradle is actual`() {
+        val filename = javaClass.getResource("regions.txt")
+            ?: error("Could not find the file")
+        val regions = filename
+            .readText()
+            .lines()
+            .filter { it.isNotBlank() }
+
+        assert(regions.sorted() == awsRegions.sorted())
     }
 }
