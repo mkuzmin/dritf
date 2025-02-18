@@ -1,9 +1,6 @@
 @file:Suppress("unused")
 
-import config.Config
 import org.junit.jupiter.api.Test
-
-val config = Config(directory = "../dritf.yaml")
 
 class Regions {
     @Test
@@ -13,12 +10,7 @@ class Regions {
 
     @Test
     fun `region names are unique`() {
-        val duplicates = config.regions
-            .groupBy { it }
-            .filter { (_, values) ->
-                values.size > 1
-            }
-            .keys
+        val duplicates = findDuplicates(config.regions)
         assert(duplicates.isEmpty()) {
             "Duplicate regions: $duplicates"
         }

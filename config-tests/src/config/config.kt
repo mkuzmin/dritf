@@ -23,7 +23,12 @@ data class Config(
 data class Service(
     val name: String,
     @SerialName("resource_types") val resourceTypes: List<ResourceType>,
-)
+) {
+    companion object {
+        val List<Service>.names
+            get() = this.map { it.name }
+    }
+}
 
 @Serializable
 data class ResourceType(
