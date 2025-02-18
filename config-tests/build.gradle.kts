@@ -25,11 +25,11 @@ kotlin {
     sourceSets {
         main {
             kotlin.setSrcDirs(listOf("src"))
+            resources.setSrcDirs(listOf("resources"))
         }
 
         test {
             kotlin.setSrcDirs(listOf("test"))
-            resources.setSrcDirs(listOf("testResources"))
         }
     }
 
@@ -44,7 +44,7 @@ tasks.test {
     dependsOn("getRegions")
 }
 
-val regions = kotlin.sourceSets["test"]
+val regions = kotlin.sourceSets["main"]
     .resources.srcDirs
     .single()
     .resolve("regions.txt")
