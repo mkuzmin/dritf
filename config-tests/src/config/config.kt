@@ -9,6 +9,7 @@ import java.io.File
 data class Config(
     val regions: List<String>,
     val services: List<Service>,
+    @SerialName("ignored_services") val ignoredServices: List<String>,
 ) {
     companion object {
         operator fun invoke(directory: String) =

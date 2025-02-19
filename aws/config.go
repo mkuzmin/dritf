@@ -7,8 +7,9 @@ import (
 )
 
 type Config struct {
-	Regions  []string        `yaml:"regions"`
-	Services []ServiceConfig `yaml:"services"`
+	Regions         []string        `yaml:"regions"`
+	Services        []ServiceConfig `yaml:"services"`
+	IgnoredServices []string        `yaml:"ignored_services"`
 }
 
 type ServiceConfig struct {
