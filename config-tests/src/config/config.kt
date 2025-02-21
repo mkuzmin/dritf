@@ -24,6 +24,7 @@ data class Config(
 data class Service(
     val name: String,
     @SerialName("resource_types") val resourceTypes: List<ResourceType>,
+    @SerialName("ignored_types") val ignoredTypes: List<String> = emptyList(),
 ) {
     companion object {
         val List<Service>.names
@@ -34,4 +35,9 @@ data class Service(
 @Serializable
 data class ResourceType(
     val name: String,
-)
+) {
+    companion object {
+        val List<ResourceType>.names
+            get() = this.map { it.name }
+    }
+}
