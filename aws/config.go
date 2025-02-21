@@ -7,13 +7,15 @@ import (
 )
 
 type Config struct {
-	Regions  []string        `yaml:"regions"`
-	Services []ServiceConfig `yaml:"services"`
+	Regions         []string        `yaml:"regions"`
+	Services        []ServiceConfig `yaml:"services"`
+	IgnoredServices []string        `yaml:"ignored_services"`
 }
 
 type ServiceConfig struct {
 	Name          string               `yaml:"name"`
 	ResourceTypes []ResourceTypeConfig `yaml:"resource_types"`
+	IgnoredTypes  []string             `yaml:"ignored_types"`
 }
 
 type ResourceTypeConfig struct {
