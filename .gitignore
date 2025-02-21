@@ -1,3 +1,7 @@
 .idea/
 .envrc
 /dritf
+
+.gradle/
+build/
+/.kotlin/
