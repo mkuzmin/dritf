@@ -19,7 +19,8 @@ type ServiceConfig struct {
 }
 
 type ResourceTypeConfig struct {
-	Name string `yaml:"name"`
+	Name    string   `yaml:"name"`
+	Regions []string `yaml:"regions"`
 }
 
 func LoadConfig(filename string) (*Config, error) {
