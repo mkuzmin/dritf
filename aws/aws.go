@@ -56,6 +56,10 @@ func scanRegion(ctx context.Context, cfg *Config, awsConfig aws.Config, region s
 
 	for _, service := range cfg.Services {
 		for _, resourceType := range service.ResourceTypes {
+			if resourceType.Regions != nil && !slices.Contains(resourceType.Regions, region) {
+				continue
+			}
+
 			name := fmt.Sprintf("AWS::%s::%s", service.Name, resourceType.Name)
 			input := cloudcontrol.ListResourcesInput{TypeName: &name}
 

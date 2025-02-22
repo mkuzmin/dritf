@@ -84,4 +84,65 @@ class ResourceTypes {
             }
         })
     }
+
+    @Test
+    fun `regions are sorted`() {
+        assertAll(config.services.flatMap { service ->
+            service.resourceTypes.map { rt ->
+                {
+                    assert(rt.regions == rt.regions.sorted()) {
+                        "${service.name}/${rt.name}"
+                    }
+                }
+            }
+        })
+    }
+
+    @Test
+    fun `regions are unique`() {
+        assertAll(config.services.flatMap { service ->
+            service.resourceTypes.map { rt ->
+                {
+                    val duplicates = findDuplicates(rt.regions)
+                    assert(duplicates.isEmpty()) { "${service.name}/${rt.name}: $duplicates" }
+                }
+            }
+        })
+    }
+
+    @Test
+    fun `missing regions`() {
+        assertAll(config.services.flatMap { service ->
+            service.resourceTypes.map { rt ->
+                {
+                    val configRegions = if (rt.regions.isEmpty()) config.regions else rt.regions
+                    val schemaRegions = schema
+                        .services.single { it.name == service.name }
+                        .resourceTypes.single { it.name == rt.name }
+                        .regions
+
+                    val diff = schemaRegions - configRegions
+                    assert(diff.isEmpty()) { "${service.name}/${rt.name}: $diff" }
+                }
+            }
+        })
+    }
+
+    @Test
+    fun `unknown regions`() {
+        assertAll(config.services.flatMap { service ->
+            service.resourceTypes.map { rt ->
+                {
+                    val configRegions = if (rt.regions.isEmpty()) config.regions else rt.regions
+                    val schemaRegions = schema
+                        .services.single { it.name == service.name }
+                        .resourceTypes.single { it.name == rt.name }
+                        .regions
+
+                    val diff = configRegions - schemaRegions
+                    assert(diff.isEmpty()) { "${service.name}/${rt.name}: $diff" }
+                }
+            }
+        })
+    }
 }

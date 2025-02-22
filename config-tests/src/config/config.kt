@@ -35,6 +35,7 @@ data class Service(
 @Serializable
 data class ResourceType(
     val name: String,
+    val regions: List<String> = emptyList(),
 ) {
     companion object {
         val List<ResourceType>.names
