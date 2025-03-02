@@ -4,11 +4,27 @@ import (
 	"context"
 	"fmt"
 	"github.com/mkuzmin/dritf/aws"
+	"github.com/mkuzmin/dritf/terraform"
 	"log"
+	"os"
 )
 
 func main() {
 	ctx := context.Background()
+
+	tfDir := "."
+	if len(os.Args) > 1 {
+		tfDir = os.Args[1]
+	}
+	tfResources, err := terraform.GetResources(ctx, tfDir)
+	if err != nil {
+		log.Fatalf("failed to read Terraform state: %v", err)
+	}
+
+	//TODO
+	for _, res := range *tfResources {
+		println(res.Address)
+	}
 
 	cfg, err := aws.LoadConfig("dritf.yaml")
 	if err != nil {

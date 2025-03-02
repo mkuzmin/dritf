@@ -9,10 +9,13 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.29.6
 	github.com/aws/aws-sdk-go-v2/service/account v1.22.8
 	github.com/aws/aws-sdk-go-v2/service/cloudcontrol v1.23.11
+	github.com/hashicorp/terraform-exec v0.22.0
+	github.com/hashicorp/terraform-json v0.24.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
+	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.59 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.28 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.32 // indirect
@@ -24,4 +27,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.28.14 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.33.14 // indirect
 	github.com/aws/smithy-go v1.22.2 // indirect
+	github.com/hashicorp/go-version v1.7.0 // indirect
+	github.com/zclconf/go-cty v1.16.1 // indirect
+	golang.org/x/text v0.21.0 // indirect
 )
