@@ -21,11 +21,6 @@ func main() {
 		log.Fatalf("failed to read Terraform state: %v", err)
 	}
 
-	//TODO
-	for _, res := range *tfResources {
-		println(res.Address)
-	}
-
 	cfg, err := aws.LoadConfig("dritf.yaml")
 	if err != nil {
 		log.Fatalf("failed to load config: %v", err)
@@ -39,6 +34,24 @@ func main() {
 			continue
 		}
 		res := result.Resource
-		fmt.Println(res.Region, res.Service, res.TypeName, res.Id)
+
+		tfResource := tfResources.FindResource(res.TypeConfig.TfConfig.Name, res.Id)
+		var checkbox string
+		var tfAddress string
+		if tfResource != nil {
+			checkbox = "[V]"
+			tfAddress = fmt.Sprint("-> ", tfResource.Address)
+		} else {
+			checkbox = "[ ]"
+		}
+
+		fmt.Println(
+			checkbox,
+			res.Region,
+			res.Service,
+			res.TypeName,
+			res.Id,
+			tfAddress,
+		)
 	}
 }

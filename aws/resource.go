@@ -6,6 +6,8 @@ type Result struct {
 }
 
 type Resource struct {
+	TypeConfig *ResourceTypeConfig
+
 	Region   string
 	Service  string
 	TypeName string

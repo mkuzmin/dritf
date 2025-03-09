@@ -19,8 +19,13 @@ type ServiceConfig struct {
 }
 
 type ResourceTypeConfig struct {
-	Name    string   `yaml:"name"`
-	Regions []string `yaml:"regions"`
+	Name     string   `yaml:"name"`
+	Regions  []string `yaml:"regions"`
+	TfConfig TfConfig `yaml:"terraform"`
+}
+
+type TfConfig struct {
+	Name string `yaml:"name"`
 }
 
 func LoadConfig(filename string) (*Config, error) {

@@ -43,6 +43,8 @@ services:
       - name: RegistryPolicy
       - name: ReplicationConfiguration
       - name: Repository
+        terraform:
+          name: aws_ecr_repository
       - name: RepositoryCreationTemplate
 
   - name: Lambda

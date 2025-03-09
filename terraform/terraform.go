@@ -59,3 +59,12 @@ func collect(module *tfjson.StateModule) Resources {
 
 	return resources
 }
+
+func (r Resources) FindResource(resourceType, id string) *Resource {
+	for i := range r {
+		if r[i].Type == resourceType && r[i].Id == id {
+			return &r[i]
+		}
+	}
+	return nil
+}

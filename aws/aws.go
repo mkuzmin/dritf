@@ -77,10 +77,11 @@ func scanRegion(ctx context.Context, cfg *Config, awsConfig aws.Config, region s
 					id := *res.Identifier
 					resultChan <- Result{
 						Resource: Resource{
-							Region:   region,
-							Service:  service.Name,
-							TypeName: resourceType.Name,
-							Id:       id,
+							TypeConfig: &resourceType,
+							Region:     region,
+							Service:    service.Name,
+							TypeName:   resourceType.Name,
+							Id:         id,
 						},
 					}
 				}
