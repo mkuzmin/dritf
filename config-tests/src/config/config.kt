@@ -36,9 +36,15 @@ data class Service(
 data class ResourceType(
     val name: String,
     val regions: List<String> = emptyList(),
+    val terraform: Terraform? = null,
 ) {
     companion object {
         val List<ResourceType>.names
             get() = this.map { it.name }
     }
 }
+
+@Serializable
+data class Terraform(
+    val name: String,
+)

@@ -81,3 +81,21 @@ tasks.register("getRegions") {
         dependsOn("unzip-$region")
     }
 }
+
+tasks.register<Exec>("terraformProvidersSchema") {
+    group = "terraform"
+    workingDir = file("aws-provider")
+
+//    val outputFile = layout.buildDirectory.file("terraform/providers-schema.json")
+//
+//    // Ensure the parent directory exists and set up the output stream during execution
+//    doFirst {
+//        val file = outputFile.get().asFile
+//        file.parentFile.mkdirs()
+//        standardOutput = file.outputStream()
+//    }
+
+    commandLine("terraform", "providers", "schema", "-json")
+
+//    outputs.file(outputFile)
+}
