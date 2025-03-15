@@ -39,13 +39,23 @@ services:
       - name: PublicRepository
         regions:
           - us-east-1
+        terraform:
+          name: aws_ecrpublic_repository
       - name: PullThroughCacheRule
+        terraform:
+          name: aws_ecr_pull_through_cache_rule
       - name: RegistryPolicy
+        terraform:
+          name: aws_ecr_registry_policy
       - name: ReplicationConfiguration
+        terraform:
+          name: aws_ecr_replication_configuration
       - name: Repository
         terraform:
           name: aws_ecr_repository
       - name: RepositoryCreationTemplate
+        terraform:
+          name: aws_ecr_repository_creation_template
 
   - name: Lambda
     resource_types:
@@ -71,8 +81,14 @@ services:
           - us-east-2
           - us-west-1
           - us-west-2
+        terraform:
+          name: aws_lambda_code_signing_config
       - name: EventSourceMapping
+        terraform:
+          name: aws_lambda_event_source_mapping
       - name: Function
+        terraform:
+          name: aws_lambda_function
     ignored_types:
       - Alias # FunctionName
       - EventInvokeConfig # FunctionName
@@ -185,6 +201,7 @@ ignored_services:
   - Forecast
   - FraudDetector
   - GameLift
+  - GameLiftStreams
   - GammaDilithium
   - GlobalAccelerator
   - Glue
